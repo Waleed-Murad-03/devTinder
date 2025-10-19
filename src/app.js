@@ -2,12 +2,21 @@ const express = require('express');
 
 const app = express();
 
-// In here basically whenever we add a '?' it means it is optional.
-// So in here the /abc route and also /ac route will work.
-app.get('/user/:userId/:name/:password', (req, res) => {
-  console.log(req.params);
-  res.send({ firstName: 'Lido', lastName: 'Murad' });
-});
+app.use(
+  '/user',
+  (req, res, next) => {
+    // Route Handler ().
+    // res.send('Rounte Handler 1');
+    console.log('Handling the rout user');
+    next();
+    res.send('Respone!!!');
+  },
+  (req, res) => {
+    // Route Handler 2.
+    console.log('Handling the rout user 2!!');
+    res.send('2nd Respone!!!');
+  }
+);
 
 app.listen(7777, () => {
   console.log('Server is successfully listening on port 7777...');
