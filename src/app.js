@@ -39,7 +39,7 @@ app.get('/user', async (req, res) => {
   }
 });
 
-// Feed API- GET /feed - get al users from the database
+// Feed API- GET /feed - get all users from the database
 app.get('/feed', async (req, res) => {
   try {
     const users = await User.find({});
@@ -49,12 +49,11 @@ app.get('/feed', async (req, res) => {
   }
 });
 
-// Deelete a user from the database
+// Delete a user from the database
 app.delete('/user', async (req, res) => {
   const userId = req.body.userId;
   try {
     const user = await User.findByIdAndDelete(userId);
-
     res.send('User deleted successfully');
   } catch (err) {
     res.status(400).send('Something went wrong');
@@ -62,7 +61,6 @@ app.delete('/user', async (req, res) => {
 });
 
 // Update data of the user
-
 app.patch('/user', async (req, res) => {
   const userId = req.body.userId;
   const data = req.body;
