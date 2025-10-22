@@ -4,8 +4,11 @@ const app = express();
 const User = require('./models/user');
 const { validateSignUpData } = require('./utils/validation');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
 app.use(express.json()); // this method basically reads the json code it got and then converts into javascript object. Also please note that this is a middleware.
+app.use(cookieParser()); // This middleware will help me be able to read the cookies instead of getting undefined.
 
 app.post('/signup', async (req, res) => {
   try {
@@ -39,10 +42,37 @@ app.post('/login', async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
+      //Create a jwt token
+      const token = await jwt.sign({ _id: user._id }, 'DEV@Tinder$790');
+      // Add the token cookie and then send response back to the user
+      res.cookie('token', token);
       res.send('Login Successful');
     } else {
       throw new Error('Invalid crendentials');
     }
+  } catch (err) {
+    res.status(400).send('Error: ' + err.message);
+  }
+});
+
+// Get profile
+app.get('/profile', async (req, res) => {
+  try {
+    const cookies = req.cookies;
+
+    const { token } = cookies;
+    if (!token) {
+      throw new Error('Invalid Token');
+    }
+
+    const decodedMessage = await jwt.verify(token, 'DEV@Tinder$790');
+    const { _id } = decodedMessage;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error('User does not exist');
+    }
+    // console.log(cookies); // We are getting undefined so we need some middleware which will help me read the cookie and that will be cookie-parser.
+    res.send(user);
   } catch (err) {
     res.status(400).send('Error: ' + err.message);
   }
