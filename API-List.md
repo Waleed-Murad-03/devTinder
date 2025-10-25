@@ -10,7 +10,7 @@ profileRouter
 
 - GET /profile/view
 - PATCH /profile/edit
-- PATCH /profile/password
+- PATCH /profile/password //Forgot password API.
 
 connectionRequestRouter
 
@@ -26,3 +26,5 @@ userRouter
 - GET /user/feed - Gets you the profile of other users on platform.
 
 Status: ignore, interested, accepted, rejected.
+
+- Make su
