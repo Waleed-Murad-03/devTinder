@@ -15,10 +15,10 @@ app.post('/signup', async (req, res) => {
   try {
     // Validation of data
     validateSignUpData(req);
-    // Encrypt the password and then tore this into the database.
+    // Encrypt the password and then store this into the database.
     const { firstName, lastName, emailId, password } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
-    console.log(passwordHash);
+    // console.log(passwordHash);
     // Creating a new instance of a user model.
     const user = new User({
       firstName,
