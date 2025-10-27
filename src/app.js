@@ -9,10 +9,12 @@ app.use(cookieParser()); // This middleware will help me be able to read the coo
 const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
 const requestRouter = require('./routes/request');
+const userRouter = require('./routes/user');
 
 app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', requestRouter);
+app.use('/', userRouter);
 connectDB()
   .then(() => {
     console.log('database connected successfully');
