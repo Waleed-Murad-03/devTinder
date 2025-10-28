@@ -71,6 +71,13 @@ userRouter.get('/user/connections', userAuth, async (req, res) => {
 userRouter.get('/feed', userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
+
+    // This is paginiation and we can add it at the  very end what is more important to write the logic of this api
+    const page = parseInt(req.query.page) || 1; // if the page number is not passed we will assume that the page number is 1
+    let limit = parseInt(req.query.limit) || 10; // if the limit is not passed we will assume that it is 10
+    limit = limit > 50 ? 50 : limit; // so that people do not abuse it and because we do not want users to make very expensive query.
+    const skip = (page - 1) * limit;
+
     // Find all of the connection requests that either I have sent or received so that we do not see them on our feed
     const connectionRequests = await ConnectionRequest.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
@@ -93,9 +100,12 @@ userRouter.get('/feed', userAuth, async (req, res) => {
         { _id: { $nin: Array.from(hideUsersFromFeed) } }, //We are finnding all of the users who are not in the hideUsersFromFeed array and their id is not equal to the logged in user id
         { _id: { $ne: loggedInUser._id } },
       ],
-    }).select(USER_SAFE_DATA);
+    })
+      .select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
 
-    res.send(users);
+    res.json({ data: users });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
