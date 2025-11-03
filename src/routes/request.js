@@ -4,6 +4,7 @@ const { userAuth } = require('../middlewares/auth');
 const ConnectionRequest = require('../models/connectionRequest');
 const User = require('../models/user');
 const ConnectionRequestModel = require('../models/connectionRequest');
+// const sendEmail = require('../utils/sendEmail');
 
 // This api is only for interested  or ignored api. So that status in here, it is only interested or ignored. Basically right swipe for accepted or left swipe for ignore.
 //  POST /request/send/:status/:requestId
@@ -60,6 +61,9 @@ requestRouter.post(
       });
 
       const data = await connectionRequest.save();
+
+      // const emailRes = await sendEmail.run();
+      // console.log(emailRes);
       res.json({
         message:
           req.user.firstName + ' is ' + status + ' in ' + toUser.firstName,
