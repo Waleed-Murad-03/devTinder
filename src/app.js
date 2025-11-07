@@ -3,6 +3,7 @@ const connectDB = require('./config/database');
 const app = express();
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const http = require('http');
 require('dotenv').config();
 // require('./utils/cronjob');
 app.use(
@@ -18,15 +19,22 @@ const authRouter = require('./routes/auth');
 const profileRouter = require('./routes/profile');
 const requestRouter = require('./routes/request');
 const userRouter = require('./routes/user');
+const initializeSocket = require('./utils/socket');
 
 app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', requestRouter);
 app.use('/', userRouter);
+
+// We are creating a server for web socket. (Live chat feature)
+const server = http.createServer(app);
+initializeSocket(server);
+
 connectDB()
   .then(() => {
     console.log('database connected successfully');
-    app.listen(process.env.PORT, () => {
+    // Here below I am changing from app to server.
+    server.listen(process.env.PORT, () => {
       console.log('Server is successfully listening on port 7777...');
     });
   })
